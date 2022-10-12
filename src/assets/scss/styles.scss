@@ -1,0 +1,53 @@
+/* Site settings */
+@import "site-settings";
+
+/* Mixins */
+@import "mixins/animations";
+@import "mixins/scan_card";
+
+/* Base */
+@import "base";
+
+/* Layouts */
+@import "layouts/content";
+@import "layouts/footer";
+@import "layouts/header";
+
+/* Sections */
+@import "sections/alerts";
+@import "sections/authorization";
+@import "sections/feedback";
+@import "sections/news";
+@import "sections/notifications";
+@import "sections/personal";
+@import "sections/personal_update";
+@import "sections/preregistration";
+@import "sections/refer";
+@import "sections/registration";
+@import "sections/setting_notify";
+@import "sections/set_plastic";
+@import "sections/stores";
+@import "sections/terms";
+@import "sections/wallet";
+
+/* Blocks */
+@import "blocks/bottomnav";
+@import "blocks/faq";
+@import "blocks/loaders";
+@import "blocks/mainmenu";
+@import "blocks/topnav";
+@import "blocks/tabs";
+@import "blocks/mask";
+@import "blocks/popup";
+@import "blocks/tips";
+@import "blocks/toast";
+@import "blocks/alert_updater";
+@import "blocks/animate";
+
+/* Elements */
+@import "elements/input_radio";
+@import "elements/switch";
+@import "elements/switcher";
+@import "elements/th";
+@import "elements/button";
+@import "elements/pass_eye";
