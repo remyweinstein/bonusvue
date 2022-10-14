@@ -3,13 +3,15 @@ import { ref } from "vue";
 import MaskInput from "../components/MaskInput.vue";
 import { getPhoneNumbers } from "../helpers/mask";
 import useAuthStore from "../stores/auth.store";
+import PopupMessage from "../components/PopupMessage.vue";
 
 const phoneForm = ref(null);
 const passwordForm = ref(null);
 const aut = useAuthStore();
 
 async function auth() {
-  console.log(aut.login(getPhoneNumbers(phoneForm.value), passwordForm.value));
+  const result = await aut.login(getPhoneNumbers(phoneForm.value), passwordForm.value);
+  //this.$refs.popup.visible = !result.status;
 
   /*
   const authPhoneEl = C("#auth-phone-mask");
@@ -52,6 +54,7 @@ async function auth() {
 }
 </script>
 <template>
+  <PopupMessage v-model="visible" ref="popup" />
   <div id="authorization">
     <div class="container">
       <p class="hero-heading">Введите ваш номер телефона и пароль</p>
@@ -91,3 +94,10 @@ async function auth() {
     </div>
   </div>
 </template>
+<script>
+export default {
+    mounted() {
+      console.log(this.$refs.popup.visible);
+    }
+}
+</script>

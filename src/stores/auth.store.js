@@ -1,7 +1,6 @@
 import { defineStore } from "pinia";
 import { apiRequest } from "../helpers/fetch-wrapper";
 import router from "../helpers/router";
-//import PopupMessage from "../components/PopupMessage.vue";
 
 const LS_TOKEN = "LS_BearerToken";
 
@@ -21,21 +20,15 @@ export default defineStore({
 
       if (result.status) {
         localStorage.clear();
-        // update pinia state
-        this.bearerToken = result.data.token;
-        //PopupMessage.open("", result.data.token);
-        //console.log(PopupMessage);
-        //openPopup("", result.data.token);
-      } else {
-        //PopupMessage.open("", result.description);
-        //Toast.open(result.description);
+
+        if (result.data.token) {
+          this.bearerToken = result.data.token;
+          localStorage.setItem(LS_TOKEN, JSON.stringify(this.bearerToken));
+          router.push(this.returnUrl || "/wallet");
+        }
       }
 
-      // store user details and jwt in local storage to keep user logged in between page refreshes
-      localStorage.setItem(LS_TOKEN, JSON.stringify(this.bearerToken));
-
-      // redirect to previous url or default to home page
-      router.push(this.returnUrl || "/wallet");
+      return result;
     },
     logout() {
       this.bearerToken = null;
