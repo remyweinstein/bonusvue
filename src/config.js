@@ -1,11 +1,9 @@
-/*
-const DOMAIN = "https://bonus.stolica-dv.ru";
-let script = document.createElement('script');
-script.src = "../../../cordova.js";
-document.head.append(script);
-*/
 //export const DOMAIN = "";
-const DOMAIN = "https://bonus.stolica-dv.ru";
+//export const DOMAIN = "https://bonus.stolica-dv.ru";
+const DOMAIN = "http://bonus.su";
+
+export { DOMAIN };
+
 export const API_URL = `${DOMAIN}/api`;
 export const TERMS_URL = `${DOMAIN}/politika-konfidentsialnosti`;
 export const RULES_URL = `${DOMAIN}/pravila`;

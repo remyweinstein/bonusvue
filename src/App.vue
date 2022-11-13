@@ -1,8 +1,14 @@
 <script setup>
+import { ref } from "vue";
 import { RouterView } from "vue-router";
 import router from "@/helpers/router";
 import useAuthStore from "@/stores/auth.store";
-import PopupMessage from "@/components/PopupMessage.vue";
+import MainMenu from "@/components/MainMenu.vue";
+import FeedBack from "@/components/FeedBack.vue";
+
+const aut = useAuthStore();
+const visMenu = ref(false);
+const visFeed = ref(false);
 </script>
 
 <style>
@@ -13,7 +19,8 @@ import PopupMessage from "@/components/PopupMessage.vue";
 </style>
 
 <template>
-  <PopupMessage ref="Popup" />
+  <FeedBack :visFeed="visFeed" @close="visFeed = false" />
+  <MainMenu :visMenu="visMenu" @close="visMenu = false" />
   <header class="topNav" v-if="router.currentRoute.value.meta.header">
     <i
       class="topNav__back icon-angle-left"
@@ -24,12 +31,12 @@ import PopupMessage from "@/components/PopupMessage.vue";
       class="icon-mail topNav__msg"
       aria-hidden="true"
       v-if="router.currentRoute.value.meta.menu"
-      onclick="showFeedback();closeNav()"
+      @click="visFeed = true"
     ></i>
     <h6>{{ router.currentRoute.value.name }}</h6>
     <i
       class="icon-menu topNav__menu"
-      onclick="openNav()"
+      @click="visMenu = true"
       v-if="router.currentRoute.value.meta.menu"
     ></i>
     <span
@@ -43,22 +50,22 @@ import PopupMessage from "@/components/PopupMessage.vue";
     <RouterView />
   </main>
 
-  <footer v-if="useAuthStore().user">
+  <footer v-if="aut.bearerToken">
     <nav>
       <ul class="bottomNav">
-        <li data-section="news" @click="$router.push('/news')">
+        <li @click="$router.push('/news')">
           <i class="icon-newspaper"></i>
           <div>Акции</div>
         </li>
-        <li data-section="stores" @click="$router.push('/stores')">
+        <li @click="$router.push('/stores')">
           <i class="icon-location"></i>
           <div>Магазины</div>
         </li>
-        <li data-section="wallet" @click="$router.push('/wallet')">
+        <li @click="$router.push('/wallet')">
           <i class="icon-credit-card"></i>
           <div>Карта</div>
         </li>
-        <li data-section="personal" @click="$router.push('/personal')">
+        <li @click="$router.push('/personal')">
           <i class="icon-id-card-o"></i>
           <div>Профиль</div>
         </li>

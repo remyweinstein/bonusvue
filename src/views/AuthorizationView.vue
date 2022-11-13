@@ -8,10 +8,15 @@ import PopupMessage from "../components/PopupMessage.vue";
 const phoneForm = ref(null);
 const passwordForm = ref(null);
 const aut = useAuthStore();
+const visible = ref(false);
+const desc = ref(null);
 
 async function auth() {
   const result = await aut.login(getPhoneNumbers(phoneForm.value), passwordForm.value);
-  //this.$refs.popup.visible = !result.status;
+  if (!result.status) {
+    desc.value = JSON.stringify(result.description);
+    visible.value = true;
+  }
 
   /*
   const authPhoneEl = C("#auth-phone-mask");
@@ -54,7 +59,7 @@ async function auth() {
 }
 </script>
 <template>
-  <PopupMessage v-model="visible" ref="popup" />
+  <PopupMessage :visible="visible" :desc="desc" @close="visible = false" />
   <div id="authorization">
     <div class="container">
       <p class="hero-heading">Введите ваш номер телефона и пароль</p>
@@ -94,10 +99,3 @@ async function auth() {
     </div>
   </div>
 </template>
-<script>
-export default {
-    mounted() {
-      console.log(this.$refs.popup.visible);
-    }
-}
-</script>

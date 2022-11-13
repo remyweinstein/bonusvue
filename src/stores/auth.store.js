@@ -12,6 +12,7 @@ export default defineStore({
     returnUrl: null,
   }),
   actions: {
+    user: true,
     async login(phone, pass) {
       const result = await apiRequest("authorization", {
         phone,
