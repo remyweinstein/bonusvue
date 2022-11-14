@@ -2,31 +2,27 @@
 import { ref } from "vue";
 import VueQrious from "vue-qrious";
 import useWalletStore from "../stores/wallet.store";
+import yana from "../helpers/funcs";
+import Loader from "../components/Loader.vue";
+import ListPurchases from "../components/ListPurchases.vue";
 
 const walletStore = useWalletStore();
 const cardNumber = ref(null);
 const balance = ref(null);
+const visibleLoader = ref(true);
 const purchases =ref([]);
+const transactions =ref([]);
 
 const updateWallet = async () => {
   const data = await walletStore.getWallet();
   cardNumber.value = data.cardNumber;
+  visibleLoader.value = !cardNumber.value;
+  purchases.value = data.purchases;
   balance.value = data.balance;
   animateBalance();
 };
 
 updateWallet();
-
-const yana = (val, plus, notnull) => {
-  const format = new Intl.NumberFormat("ru-RU").format(Math.trunc(val));
-  if (notnull) {
-    return "";
-  }
-  if (plus && val > 0) {
-    return plus + format;
-  }
-  return format;
-};
 
 const animateBalance = () => {
   const bal = balance.value;
@@ -62,14 +58,9 @@ const promiseTimeout = async (fn, ms) => {
             всё будет завершено.
           </h6>
         </div>
-        <div class="wallet__content_loader" v-show="!cardNumber">
-          <div class="lds-ellipsis">
-            <div></div>
-            <div></div>
-            <div></div>
-            <div></div>
-          </div>
-        </div>
+        <Loader
+          :visible="visibleLoader"
+        />
         <div class="wallet__content_data" id="wallet-data" v-show="cardNumber">
           <div class="wallet__content_data_type" id="cardType">
             Бонусная карта
@@ -110,69 +101,9 @@ const promiseTimeout = async (fn, ms) => {
         </div>
       </div>
     </div>
-    <div class="wallet__bottom">
-      <button
-        id="transactions-details-button"
-        class="transactions_details_button button-primary"
-      >
-        История
-      </button>
-      <div class="wallet__bottom_transactions hidden">
-        <div class="animated animate__fadeIn" v-for="purch in purchases" data-purchase-id="1309420">
-          <div>
-            <span>06.11.2022</span>
-            <span>&nbsp;</span>
-            <span class="delete trans" data-disable-purchase="1309420"
-              ><i class="icon-cancel"></i
-            ></span>
-          </div>
-          <div class="purchase__row">
-            <span class="type"
-              ><span class="ring"><i class="clock"></i></span>
-              <span class="title-clock">Сгорание</span></span
-            >
-            <span class="bad"></span>
-            <span class="bad">-105 <span>Б</span></span>
-          </div>
-        </div>
-
-
-        <div class="animated animate__fadeIn" data-purchase-id="1309420">
-          <div>
-            <span>06.11.2022</span>
-            <span>&nbsp;</span>
-            <span class="delete trans" data-disable-purchase="1309420"
-              ><i class="icon-cancel"></i
-            ></span>
-          </div>
-          <div class="purchase__row">
-            <span class="type"
-              ><span class="ring"><i class="clock"></i></span>
-              <span class="title-clock">Сгорание</span></span
-            >
-            <span class="bad"></span>
-            <span class="bad">-105 <span>Б</span></span>
-          </div>
-        </div>
-
-        <div class="animated animate__fadeIn" data-purchase-id="1857478">
-          <div>
-            <span>29.10.2022</span>
-            <span>&nbsp;</span>
-            <span class="delete purch" data-disable-purchase="1857478"
-              ><i class="icon-cancel"></i
-            ></span>
-          </div>
-          <div class="purchase__row">
-            <span class="type"
-              ><span class="ring"><i class="basket"></i></span>
-              <span class="title-basket">Покупка</span></span
-            >
-            <span class="bad">0 <span>Б</span></span>
-            <span class="good">+36 <span>Б</span></span>
-          </div>
-        </div>
-      </div>
-    </div>
+    <ListPurchases
+      :purchases="purchases"
+      :transactions="transactions"
+    />
   </div>
 </template>
