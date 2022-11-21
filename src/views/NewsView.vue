@@ -16,11 +16,14 @@ const datePNews = ref(null);
 const titlePNews = ref(null);
 const descPNews = ref(null);
 
+if (!personal.data) {
+  await personal.getPersonal();
+}
+
 const updateNew = async () => {
   const data = await newsStore.getNews();
-  const pers = await personal.getPersonal();
   newsli.value = data;
-  codeCity.value = getCodeByCity(pers.city);
+  codeCity.value = getCodeByCity(personal.data.city);
 };
 
 updateNew();

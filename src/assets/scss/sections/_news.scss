@@ -44,6 +44,7 @@
     z-index: 4;
     margin-top: env(safe-area-inset-top,0);
     overflow: auto;
+    text-align: left !important;
     
     .newsOverlay__cont {
         border-radius: 1rem;

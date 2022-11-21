@@ -30,11 +30,15 @@ const phoneFormat = (a) => {
 };
 
 const updatePersonal = async () => {
-  const data = await personal.getPersonal();
+  const data = personal.data;
   name.value = data.firstname;
   phone.value = data.phone;
   birthdate.value = data.birthdate;
 };
+
+if (!personal.data) {
+  await personal.getPersonal();
+}
 
 updatePersonal();
 </script>

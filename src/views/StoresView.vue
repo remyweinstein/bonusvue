@@ -20,9 +20,9 @@ const coordPStore = ref(null);
 const idPStore = ref(null);
 
 const updateStore = async () => {
-  const pers = await personal.getPersonal();
+  const pers = personal.data;
   curCity.value = pers.city || "Хабаровск";
-  const data = await storesStore.getStores();
+  const data = storesStore.data;
   stores.value = data.stores;
   cities.value = data.cities;
   selectedCity.value = data.cities.filter((val) => {
@@ -30,8 +30,6 @@ const updateStore = async () => {
   })[0].id;
   listStore(selectedCity.value);
 };
-
-updateStore();
 
 const listStore = (cityId) => {
   storesList.value = stores.value.filter((val) => {
@@ -50,6 +48,14 @@ const openMap = (id) => {
   coordPStore.value = data.coordinates;
   idPStore.value = id;
 };
+
+if (!storesStore.data) {
+  await storesStore.getStores();
+}
+if (!personal.data) {
+  await personal.getPersonal();
+}
+updateStore();
 </script>
 
 <template>

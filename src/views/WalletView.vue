@@ -1,28 +1,16 @@
 <script setup>
 import { ref } from "vue";
 import VueQrious from "vue-qrious";
-import useWalletStore from "../stores/wallet.store";
-import yana from "../helpers/funcs";
-import Loader from "../components/Loader.vue";
+import { useWalletStore } from "../stores/wallet.store";
+import { yana, promiseTimeout } from "../helpers/funcs";
+import Loader from "../components/LoaderWallet.vue";
 import ListPurchases from "../components/ListPurchases.vue";
 
 const walletStore = useWalletStore();
-const cardNumber = ref(null);
-const balance = ref(null);
-const visibleLoader = ref(true);
-const purchases =ref([]);
-const transactions =ref([]);
 
-const updateWallet = async () => {
-  const data = await walletStore.getWallet();
-  cardNumber.value = data.cardNumber;
-  visibleLoader.value = !cardNumber.value;
-  purchases.value = data.purchases;
-  balance.value = data.balance;
-  animateBalance();
-};
-
-updateWallet();
+const cardNumber = ref(false);
+const balance = ref(0);
+const listPurch = ref([]);
 
 const animateBalance = () => {
   const bal = balance.value;
@@ -36,11 +24,57 @@ const animateBalance = () => {
   }, 1000);
 };
 
-const promiseTimeout = async (fn, ms) => {
-  await new Promise((resolve) => setTimeout(resolve, ms));
-  return fn();
+const updateWallet = () => {
+  const res = walletStore.data;
+
+  cardNumber.value = res.cardNumber;
+  balance.value = res.balance;
+  listPurch.value = preparePurchases(res.purchases, res.transactions);
+  animateBalance();
 };
+
+const preparePurchases = (purchases = [], transactions = []) => {
+  const tempTransactions = transactions.reduce(function (acc, el) {
+    const isBonus = el.type === "Bonus";
+    const icon = isBonus ? "gift" : "clock";
+    const name = isBonus ? "Подарок" : "Сгорание";
+
+    acc.push({
+      id: el.id,
+      name,
+      icon,
+      operation_date: el.date,
+      store_title: el.description,
+      store_description: el.type,
+      cashback_amount: Math.trunc(el.amount / 100),
+      date: new Date(el.date.replace(new RegExp("-", "g"), "/")),
+    });
+
+    return acc;
+  }, []);
+
+  let tempPurchases = purchases.reduce(function (acc, el) {
+    el.date = new Date(el.operation_date.replace(new RegExp("-", "g"), "/"));
+    el.icon = "basket";
+    el.name = "Покупка";
+    el.cashback_amount = Math.trunc(el.cashback_amount);
+    el.payment_amount = Math.trunc(el.payment_amount);
+    acc.push(el);
+    return acc;
+  }, []);
+
+  tempPurchases.push(...tempTransactions);
+
+  return tempPurchases.sort((a, b) => b.date - a.date);
+};
+
+if (!walletStore.data) {
+  await walletStore.getWallet();
+}
+
+updateWallet();
 </script>
+
 <template>
   <div id="wallet" class="wallet">
     <div class="wallet__content">
@@ -58,9 +92,7 @@ const promiseTimeout = async (fn, ms) => {
             всё будет завершено.
           </h6>
         </div>
-        <Loader
-          :visible="visibleLoader"
-        />
+        <Loader :visible="!cardNumber" />
         <div class="wallet__content_data" id="wallet-data" v-show="cardNumber">
           <div class="wallet__content_data_type" id="cardType">
             Бонусная карта
@@ -69,7 +101,7 @@ const promiseTimeout = async (fn, ms) => {
             class="wallet__content_data_qr animated animate__fadeIn"
             v-show="cardNumber"
           >
-            <vue-qrious :value="cardNumber" size="1024" foreground="#4062b7" />
+            <vue-qrious :value="cardNumber" :size="1024" foreground="#4062b7" />
           </div>
           <div style="display: none">Ваш персональный код:</div>
           <div style="display: none">
@@ -101,9 +133,6 @@ const promiseTimeout = async (fn, ms) => {
         </div>
       </div>
     </div>
-    <ListPurchases
-      :purchases="purchases"
-      :transactions="transactions"
-    />
+    <ListPurchases :purchases="listPurch" />
   </div>
 </template>

@@ -1,6 +1,6 @@
 //const DOMAIN = "";
-//const DOMAIN = "https://bonus.stolica-dv.ru";
-const DOMAIN = "http://bonus.su";
+const DOMAIN = "https://bonus.stolica-dv.ru";
+//const DOMAIN = "http://bonus.su";
 
 export { DOMAIN };
 

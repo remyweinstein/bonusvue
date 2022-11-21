@@ -1,12 +1,13 @@
 <script setup>
 import { ref } from "vue";
+import { yana } from "../helpers/funcs";
 import PopupPurchase from "../components/PopupPurchase.vue";
 
 defineProps({
   purchases: Array,
-  transactions: Array,
 });
 
+const isOpen = ref(false);
 const popupVisible = ref(false);
 const popupDate = ref(null);
 const popupTotalDisc = ref(null);
@@ -17,38 +18,32 @@ const popupLinkStore = ref(null);
 const popupPositions = ref([]);
 
 const openPopup = (check) => {
-  const {discount_amount, payment_amount, cashback_amount, operation_date, operation_type, store_title, positions} = check;
+  const {
+    discount_amount,
+    payment_amount,
+    cashback_amount,
+    operation_date,
+    operation_type,
+    store_title,
+    positions,
+  } = check;
 
   popupVisible.value = true;
   popupDate.value = operation_date.substr(0, 10).split("-").reverse().join(".");
-  popupTotalDisc.value = (discount_amount || payment_amount) ? "-" + yana(Math.abs(discount_amount) + Math.abs(payment_amount)) : "";
-  popupRefund.value = (!operation_type) ? '<span class="bad" style="font-size: 12px;text-align: right;">чек возврата</span>' : '';
+  popupTotalDisc.value =
+    discount_amount || payment_amount
+      ? "-" + yana(Math.abs(discount_amount) + Math.abs(payment_amount))
+      : "";
+  popupRefund.value = operation_type;
   popupAmount.value = payment_amount ? yana(payment_amount) : "";
-  popupCashback.value = (cashback_amount > 0) ? "+" + yana(cashback_amount) : yana(cashback_amount);
+  popupCashback.value =
+    cashback_amount > 0 ? "+" + yana(cashback_amount) : yana(cashback_amount);
   popupLinkStore.value = `<span>${store_title}</span>`;
   popupPositions.value = positions;
 };
 
-const preparePurchases = (purchases = [], transactions = []) => {
-    const tempTransactions = transactions.reduce(function(acc, el, i, arr) {
-        acc.push({ id: el.id,
-                   operation_date: el.date, 
-                   store_title: el.description,
-                   store_description: el.type,
-                   cashback_amount: (el.amount/100),
-                   date: new Date(el.date.replace(new RegExp("-", 'g'), "/")) });
-        return acc;
-    }, []);
-    
-    let tempPurchases = purchases.reduce(function(acc, el, i, arr) {
-        el.date = new Date(el.operation_date.replace(new RegExp("-", 'g'), "/"));
-        acc.push(el);
-        return acc;
-    }, []);
-    
-    tempPurchases.push(...tempTransactions);
-    
-    return tempPurchases.sort((a, b) => a.date - b.date);
+const openHistory = () => {
+  isOpen.value = !isOpen.value;
 };
 </script>
 
@@ -57,21 +52,32 @@ const preparePurchases = (purchases = [], transactions = []) => {
     :visible="popupVisible"
     :onlyDate="popupDate"
     :totalDisc="popupTotalDisc"
-    :refund="popupRefund"
+    :operation_type="popupRefund"
     :amount="popupAmount"
     :cashback="popupCashback"
     :linkStore="popupLinkStore"
     :tempPositions="popupPositions"
+    @close="popupVisible = false"
   />
   <div class="wallet__bottom">
     <button
       id="transactions-details-button"
       class="transactions_details_button button-primary"
+      @click="openHistory"
     >
       История
     </button>
-    <div class="wallet__bottom_transactions hidden">
-      <div class="animated animate__fadeIn" v-for="purch in preparePurchases(purchases, transactions)" :data-purchase-id="purch.id">
+    <div
+      class="wallet__bottom_transactions"
+      :class="!isOpen ? 'hidden' : null"
+      v-if="purchases.length !== 0"
+    >
+      <div
+        class="animated animate__fadeIn"
+        v-for="purch in purchases"
+        :key="purch.id"
+        :data-purchase-id="purch.id"
+      >
         <div>
           <span>{{ purch.operation_date }}</span>
           <span>&nbsp;</span>
@@ -79,12 +85,30 @@ const preparePurchases = (purchases = [], transactions = []) => {
             <i class="icon-cancel"></i>
           </span>
         </div>
-        <div class="purchase__row" @click="(purch.transactions) ? openPopup(purch.transactions) : null">
+        <div
+          class="purchase__row"
+          @click="purch.positions ? openPopup(purch) : null"
+        >
           <span class="type">
-            <span class="ring"><i class="clock"></i></span>
-            <span class="title-clock">Сгорание</span></span>
-          <span class="bad"></span>
-          <span class="bad">-105 <span>Б</span></span>
+            <span class="ring"><i :class="purch.icon"></i></span>
+            <span :class="`title-${purch.icon}`">{{ purch.name }}</span>
+          </span>
+          <span
+            class="bad"
+            v-html="
+              purch.payment_amount
+                ? `${purch.payment_amount} <span>Б</span>`
+                : ''
+            "
+          ></span>
+          <span
+            :class="purch.cashback_amount > 0 ? `good` : `bad`"
+            v-html="
+              purch.cashback_amount
+                ? `${purch.cashback_amount} <span>Б</span>`
+                : ''
+            "
+          ></span>
         </div>
       </div>
     </div>

@@ -1,0 +1,6 @@
+{
+  "appId": "ru.stolicadv.bonus",
+  "appName": "Столица",
+  "webDir": "dist",
+  "bundledWebRuntime": false
+}

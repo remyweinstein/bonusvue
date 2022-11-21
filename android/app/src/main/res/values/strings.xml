@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Bonus.Stolica</string>
+    <string name="title_activity_main">Bonus.Stolica</string>
+    <string name="package_name">ru.stolicadv.bonus</string>
+    <string name="custom_url_scheme">ru.stolicadv.bonus</string>
+</resources>

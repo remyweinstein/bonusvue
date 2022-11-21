@@ -47,7 +47,9 @@ const visFeed = ref(false);
   </header>
 
   <main class="main">
-    <RouterView />
+    <Suspense>
+      <RouterView />
+    </Suspense>
   </main>
 
   <footer v-if="aut.bearerToken">

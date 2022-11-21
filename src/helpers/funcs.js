@@ -1,4 +1,4 @@
-const yana = (val, plus, notnull) => {
+export const yana = (val, plus, notnull) => {
   const format = new Intl.NumberFormat("ru-RU").format(Math.trunc(val));
   if (notnull) {
     return "";
@@ -9,4 +9,7 @@ const yana = (val, plus, notnull) => {
   return format;
 };
 
-export default yana;
+export const promiseTimeout = async (fn, ms) => {
+  await new Promise((resolve) => setTimeout(resolve, ms));
+  return fn();
+};

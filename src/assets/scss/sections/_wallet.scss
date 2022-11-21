@@ -238,7 +238,8 @@ a[data-click="openBalanceView"] {
     background-color: #fff;
     z-index: 4;
     overflow: auto;
-    
+    text-align: center;
+
     .qrcodeOverlay__cont {
         background-color: #fff;
         margin: 5rem 1rem;
@@ -260,6 +261,7 @@ a[data-click="openBalanceView"] {
     background-color: #fff;
     z-index: 4;
     overflow: auto;
+    text-align: left;
     
     .positionOverlay__cont {
         background-color: #fff;

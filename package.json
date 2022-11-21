@@ -8,7 +8,13 @@
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
   },
   "dependencies": {
+    "@capacitor/android": "^4.5.0",
+    "@capacitor/cli": "^4.5.0",
+    "@capacitor/core": "^4.5.0",
+    "@capacitor/ios": "^4.5.0",
+    "@capacitor/preferences": "^4.0.2",
     "pinia": "^2.0.21",
+    "pinia-plugin-capacitor-persist": "^1.2.0",
     "usemodal-vue3": "^0.3.6",
     "vue": "^3.2.38",
     "vue-qrious": "^3.1.0",
